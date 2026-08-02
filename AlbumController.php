@@ -17,13 +17,14 @@ class AlbumController extends Controller
         public function create()
     {
     
-        return view('albuns.create');
+        $album = Album::findOrFail($album_id);
+        return view("albuns.create", compact("album"));
     }
 
     public function store(Request $request)
     {
         
-        $request->validate([
+       $validated = $request->validate([
         'nome' => 'required|string|max:255',
         'artista_id' => 'required|exists:artistas,id',
         'ano_lancamento' => 'required|integer',
@@ -31,9 +32,8 @@ class AlbumController extends Controller
         ]);
 
         
-        Album::create($request->all());
+        Album::create($validated);
 
-       
         return redirect()->route('albuns.List')->with('sucesso', 'Álbum cadastrado com sucesso!');
     }
 
