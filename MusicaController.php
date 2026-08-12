@@ -8,61 +8,59 @@ use Illuminate\Http\Request;
 
 class MusicaController extends Controller
 {
-    
-    public function index(int $album_id)
+    public function index(Album $album)
     {
-        $musicas = Musica::where('album_id', $album_id)->get();
-        return view("musicas.index", compact("musicas", "album_id"));
+
+        $musicas = $album->musicas;
+        return view("musicas.index", compact("album", "musicas"));
     }
 
-    
-    public function create(int $album_id)
+    public function create(Album $album)
     {
-        $album = Album::findOrFail($album_id);
         return view("musicas.create", compact("album"));
     }
 
-   
-    public function store(Request $request,int $album_id)
+    public function store(Request $request, Album $album)
     {
-       $album = Album::FindOrFail($album_id);   
-
-       $validated = $request->validate([
+        $validated = $request->validate([
             'nome' => 'required|string|max:255',
             'artista' => 'required|string|max:255',
             'duration' => 'required|integer',
         ]);
 
-       $album->musicas()->create($validated);
-    return redirect()->route("musicas.create", ['album_id' => $album_id])->with("success", "Música criada com sucesso");
+        $album->musicas()->create($validated);
+
+        return redirect()->route("albuns.musicas.index", $album)->with("success", "Música cadastrada com sucesso!");
     }
 
-     
     public function show(Musica $musica)
     {
         return view("musicas.show", compact("musica"));
     }
 
-  
     public function edit(Musica $musica)
     {
         return view("musicas.edit", compact("musica"));
     }
 
-       public function update(Request $request, Musica $musica)
+    
+    public function update(Request $request, Musica $musica)
     {
         $validated = $request->validate([
             'nome' => 'required|string|max:255',
             'artista' => 'required|string|max:255',
             'duration' => 'required|integer'
         ]);
+
         $musica->update($validated);
-        return redirect()->route("musicas.index")->with("success", "Música atualizada com sucesso");
+        return redirect()->route("albuns.musicas.index", $musica->album_id)->with("success", "Música atualizada com sucesso!");
     }
 
-       public function destroy(Musica $musica)
+    public function destroy(Musica $musica)
     {
+        $albumId = $musica->album_id;
         $musica->delete();
-        return redirect()->route("musicas.create")->with("success", "Música excluída com sucesso");
+
+        return redirect()->route("albuns.musicas.index", $albumId)->with("success", "Música excluída com sucesso!");
     }
 }
