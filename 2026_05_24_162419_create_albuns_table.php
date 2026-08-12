@@ -12,7 +12,7 @@ return new class extends Migration
              $table->id();
              $table->string('nome');
              $table->foreignId('artista_id')->constrained('artistas')->cascadeOnDelete();
-             $table->year('ano_lancamento');
+             $table->integer('ano_lancamento');
              $table->string('url_imagem');
              $table->timestamp('created_at')->nullable();
              $table->timestamp('updated_at')->nullable();
