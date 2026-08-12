@@ -13,9 +13,9 @@ class ArtistaController extends Controller
         return view('artistas.index', compact('artistas'));
     }
 
-    public function create()
+    public function create ()
     {
-        return view('artistas.create');
+        return view("artistas.create", compact("artista"));
     }
 
     public function store(Request $request)
@@ -24,10 +24,10 @@ class ArtistaController extends Controller
             'nome' => 'required|string|max:255',
             'genero' => 'required|string|max:255',
             'pais_origem' => 'required|date',
+            'url_imagem' => 'nullable|url'
         ]);
 
         Artista::create($validated);
-
         return redirect()->route('artistas.index')->with('success', 'Artista criado com sucesso!');
     }
 
