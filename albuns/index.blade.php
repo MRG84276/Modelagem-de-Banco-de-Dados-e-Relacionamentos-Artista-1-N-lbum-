@@ -15,6 +15,7 @@
     <tbody>
         @forelse($albuns as $albun)
             <tr>
+                <!-- Exibição da url_imagem com fallback se estiver vazia -->
                 <td style="text-align: center;">
                     @if($albun->url_imagem)
                         <img src="{{ $albun->url_imagem }}" alt="{{ $albun->nome }}">

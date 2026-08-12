@@ -9,7 +9,6 @@
           <th>Nome</th>
           <th>Artista</th>
           <th>Duração</th>
-          <th>Ações</th>
        </tr>
     </thead>
     <tbody>
