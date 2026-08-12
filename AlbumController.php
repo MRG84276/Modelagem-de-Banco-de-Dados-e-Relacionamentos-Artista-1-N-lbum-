@@ -1,54 +1,75 @@
-<?php
+bum;
 
-namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
-use App\Models\Album;
 
 class AlbumController extends Controller
 {
-    public function list()
+   
+    public function index()
     {
         
-        $albuns = Album::all();
-        return view('albuns.list', compact('albuns'));
+        $albuns = Album::with('artista')->get(); 
+        return view('albuns.index', compact('albuns'));
+
     }
 
-        public function create()
-    {
     
-        $album = Album::findOrFail($album_id);
-        return view("albuns.create", compact("album"));
+    public function create()
+    {
+
+        $artistas = Artista::all(); 
+        return view('albuns.create', compact('artistas'));
+
     }
 
+   
     public function store(Request $request)
     {
-        
-       $validated = $request->validate([
-        'nome' => 'required|string|max:255',
-        'artista_id' => 'required|exists:artistas,id',
-        'ano_lancamento' => 'required|integer',
-        'url_imagem' => 'nullable|url'
+        $validated = $request->validate([
+            'nome' => 'required|string|max:255',
+            'artista_id' => 'required|exists:artistas,id',
+            'ano_lancamento' => 'required|integer',
+            'url_imagem' => 'nullable|url'
         ]);
 
-        
         Album::create($validated);
+        return redirect()->route('albuns.index')->with('sucesso', 'Álbum cadastrado com sucesso');
 
-        return redirect()->route('albuns.List')->with('sucesso', 'Álbum cadastrado com sucesso!');
     }
 
-    public function Show(Album $album)
+   
+    public function show(Album $album)
     {
-        $album->load('musicas'); 
+        $album->load('musicas', 'artista'); 
         return view('albuns.show', compact('album'));
     }
 
-
    
-    public function Delete(Album $album)
+    public function edit(Album $album)
     {
-        
+        $artistas = Artista::all();
+        return view('albuns.edit', compact('album', 'artistas'));
+    }
+
+    
+    public function update(Request $request, Album $album)
+    {
+        $validated = $request->validate([
+            'nome' => 'required|string|max:255',
+            'artista_id' => 'required|exists:artistas,id',
+            'ano_lancamento' => 'required|integer',
+            'url_imagem' => 'nullable|url'
+        ]);
+
+        $album->update($validated);
+
+        return redirect()->route('albuns.index')->with('sucesso', 'Álbum atualizado com sucesso');
+    }
+
+    public function destroy(Album $album)
+    {
         $album->delete(); 
-        return redirect()->route('albuns.list')->with('sucesso', 'Álbum e suas faixas foram excluídos!');
+        
+        return redirect()->route('albuns.index')->with('sucesso', 'Álbum e suas faixas foram excluídos');
     }
 }
+
